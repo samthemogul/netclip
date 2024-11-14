@@ -5,7 +5,10 @@ import styles from "@/styles/components/button.module.css"
 
 const Button = ({ text, onClick, type, icon }: ButtonProps) => {
   return (
-    <button>{text}</button>
+    <button onClick={onClick} className={`${styles[type]} ${styles.buttonContainer}`}>
+        {icon ? icon : null }
+        <p>{text}</p>
+    </button>
   )
 }
 

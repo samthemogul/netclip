@@ -1,0 +1,19 @@
+.buttonContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding: 15px 25px;
+    border-radius: 50px;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: 0.2s all ease-in;
+    cursor: pointer;
+}
+.white-btn {
+    background-color: var(--wizard);
+    color: var(--dark);
+}
+.white-btn:hover {
+    background-color: var(--light-grey);
+}

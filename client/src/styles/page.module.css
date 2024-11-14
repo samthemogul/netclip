@@ -28,3 +28,25 @@
     height: 100%;
     object-fit: cover;
 }
+.infoContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin-top: 100px;
+    gap: 20px;
+}
+.title {
+    font-size: 4rem;
+    color: var(--wizard);
+    font-weight: 900;
+}
+.infoDescription {
+    font-size: 1rem;
+    color: var(--wizard);
+    max-width: 600px;
+    text-align: center;
+}
+.googleIcon {
+    width: 40px;
+}
