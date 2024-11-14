@@ -1,0 +1,97 @@
+/* CONFIGURATIONS */
+
+:root {
+  /* PRIMARY COLORS */
+  --wizard: #FFFFFF;
+  --dark: #111111;
+  --border-ash: #B9B9B9;
+  --shadow-ash: #e9e9e9;
+  --active:rgb(0, 186, 0);
+
+  /* STATUS COLORS */
+  --alert: #E70830;
+
+  /* BOX LAYOUT */
+  --box-shadow: 0 1rem 1rem var(--shadow-ash);
+  --box-shadow-flat: 0 0 1rem 3px var(--shadow-ash);
+  --box-shadow-dark: 0 0 1rem 1px var(--border-ash);
+  --border-radius-small: 0.5rem;
+  --border-radius : 1.2rem; 
+  --border-radius-curve: 2rem;
+  --box-padding: 15px 7%;
+  --mobile-box-padding: 12px 3%;
+
+  /* TEXT LAYOUT */
+  --icon-size: 15px;
+  --text-size: 0.9rem;
+  --mobile-text-size: 1rem;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  outline: none;
+  border: 0;
+  text-decoration: none;
+  list-style: none;
+}
+
+html {
+  font-size: var(--text-size);
+}
+body {
+    font-family: var(--font-inter), Arial, sans-serif;
+    background: var(--wizard);
+    font-size: var(--text-size);
+    max-width: 100vw;
+    height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+button, input {
+  outline: none;
+  background: transparent;
+  font-family: var(--font-inter);
+}
+button {
+  cursor: pointer;
+}
+
+.material-symbols-outlined {
+  font-variation-settings:
+  'FILL' 0,
+  'wght' 400,
+  'GRAD' 0,
+  'opsz' 24
+}
+
+/* SCROLLBAR SETTINGS  */
+body::-webkit-scrollbar {
+    width: 10px;
+    @media(max-width:600px){
+        display: none;
+    }
+}
+body::-webkit-scrollbar-track {
+    background: var(--border-ash);
+}
+body::-webkit-scrollbar-thumb {
+    background: var(--wizard);
+}
+
+
+/* Mobile Configuration */
+@media only screen and (max-width: 640px) {
+  body {
+    font-size: var(--mobile-text-size);
+  }
+  -webkit-scrollbar {
+    display: none !important;
+}
+}
