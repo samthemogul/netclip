@@ -13,6 +13,7 @@ import styles from "@/styles/page.module.css";
 import { images } from "@/constants";
 import { motion } from "framer-motion";
 import { authenticateUser } from "@/utils/handlers";
+import axios from "axios"
 
 export default function Home() {
 
@@ -27,14 +28,13 @@ export default function Home() {
       // } else {
       //   console.log(user)
       // }
-      const res = await fetch("http://localhost:4000/api/auth/google", {
-        method: "GET",
+      const res = await axios.get("https://netclip-server.onrender.com/api/auth/google", {
         headers: {
           "Content-Type": "application/json",
         },
       });
       console.log(res)
-      const data = await res.json();
+      const data = await res.data;
     } catch (error) {
       console.log(error)
     }
