@@ -16,7 +16,7 @@ class JwtService implements IJwt {
       const user = req.user;
       if (user) {
         const token = jwt.sign({ user: user }, "secret", { expiresIn: "24h" });
-        res.header("Authorization", `Bearer ${token}`);
+        res.locals.token = token;
         next();
       } else {
         throw new AuthError(

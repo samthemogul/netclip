@@ -57,6 +57,7 @@ class AppController {
   private configureRouting() {
     const appRouter = new Router(this.app);
     appRouter.configAuthRoutes();
+    appRouter.configUserRoutes()
     appRouter.configErrorHandler();
   }
 
