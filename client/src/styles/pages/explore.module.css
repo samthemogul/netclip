@@ -11,3 +11,68 @@
     height: 100%;
     object-fit: cover;
 }
+.dashboardHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 50px;
+}
+.searchAndOptions {
+    display: flex;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.2);
+    border: 1px solid var(--border-ash);
+    border-radius: 50px;
+    padding: 10px 20px;
+    gap: 10px;
+}
+.searchText {
+    color: var(--wizard);
+}
+.searchBar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-right: 20px;
+    border-right: 1px solid var(--border-ash);
+}
+.searchIcon, .optionsIcon, .dropDownIcon {
+    color: var(--wizard);  
+}
+.optionsContainer {
+    display: flex;
+    padding: 0 10px;
+    align-items: center;
+    gap: 10px;
+}
+.profileContainer {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.profileImgContainer {
+    display: flex;
+    width: 30px;
+    height: 30px;
+    margin-left: 10px;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-radius: 50%;
+}
+.profileImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.profileGreeting {
+    color: var(--wizard);
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+.searchBarInput {
+    color: var(--wizard);
+    font-size: 0.9rem;
+    font-weight: 500;
+    width: 400px;
+}

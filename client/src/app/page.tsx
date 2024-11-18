@@ -23,14 +23,19 @@ export default function Home() {
   const router = useRouter();
   const dispatch = useDispatch();
   const [token, setToken] = useState<string | null>(null);
+  const user = useSelector((state: RootState) => state.user);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const jwtToken = params.get("token");
-    const userId = params.get("userId")
+    const userId = params.get("userId");
+
+    if (user.id && user.accessToken) {
+      router.push("/explore");
+    }
 
     if (jwtToken) {
-      dispatch(userActions.login({ userId: userId, token: jwtToken}))
+      dispatch(userActions.login({ userId: userId, token: jwtToken }));
       router.push("/explore");
     } else {
       setToken("");
@@ -45,8 +50,8 @@ export default function Home() {
     }
   };
 
-  if(token == null) {
-    return <PageLoader />
+  if (token == null) {
+    return <PageLoader />;
   }
 
   return (

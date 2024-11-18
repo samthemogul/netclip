@@ -15,7 +15,7 @@ class JwtService implements IJwt {
     try {
       const user = req.user;
       if (user) {
-        const token = jwt.sign({ user: user }, "secret", { expiresIn: "24h" });
+        const token = jwt.sign({ user: user }, process.env.SESSION_SECRET, { expiresIn: "24h" });
         res.locals.token = token;
         next();
       } else {
@@ -35,13 +35,13 @@ class JwtService implements IJwt {
     next: NextFunction
   ) => {
     try {
-      const token = req.headers.authorization?.split(" ")[1];
+      const token = req.headers.authorization?.split(" ")[1].slice(1, -1);
       if (token) {
-        this.checkBlacklist(token).then((token) => {
-          if (token) {
+        this.checkBlacklist(token).then((tkn) => {
+          if (tkn) {
             throw new AuthError("Token is blacklisted");
           } else {
-            const decoded = jwt.verify(token, "secret");
+            const decoded = jwt.verify(token, process.env.SESSION_SECRET);
             req.user = decoded;
             next();
           }
