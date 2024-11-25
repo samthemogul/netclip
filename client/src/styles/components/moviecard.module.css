@@ -1,0 +1,77 @@
+.movieCardContainer {
+    display: flex;
+    flex-direction: column;
+    width: 250px;
+    height: 450px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+.movieCardImageContainer {
+    width: 100%;
+    height: 70%;
+    overflow: hidden;
+}
+.movieCardImage {
+    width: 100%;
+    height: 100%;
+    object-fit: fill;
+}
+.movieCardDetails {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-top: 10px;
+}
+.movieCardYear {
+    font-size: 0.8rem;
+    color: var(--wizard);
+    font-weight: 700;
+}
+.movieCardTitle {
+    font-size: 1.2rem;
+    color: var(--wizard);
+    font-weight: 700;
+    max-width: 400px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.movieCardDescription {
+    font-size: 0.9rem;
+    color: var(--wizard);
+    font-weight: 400;
+    max-width: 400px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;   
+}
+.movieCardRating {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    align-items: center;
+}
+.imdbLogo {
+    background-color: var(--warm);
+    border-radius: 2px;
+    padding: 3px 10px;
+    width: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.imdbLogoText {
+    font-size: 0.8rem;
+    color: var(--dark);
+    font-weight: 700;
+}
+.ratingText {
+    font-size: 0.8rem;
+    color: var(--wizard);
+    font-weight: 700;
+}
+.movieCardGenres {
+    font-size: 0.8rem;
+    color: var(--wizard);
+    font-weight: 600;
+}

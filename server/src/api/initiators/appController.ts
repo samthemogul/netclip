@@ -58,6 +58,7 @@ class AppController {
     const appRouter = new Router(this.app);
     appRouter.configAuthRoutes();
     appRouter.configUserRoutes()
+    appRouter.configMovieRoutes()
     appRouter.configErrorHandler();
   }
 

@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import { IUser } from "./user";
+import { TopMovie } from "./movie";
 
 declare global {
   namespace NodeJs {

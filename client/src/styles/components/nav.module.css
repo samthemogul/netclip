@@ -1,0 +1,19 @@
+.deskNavContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    left: 2%;
+    top: 20vh;
+    z-index: 10;
+    padding: 5px;
+    background-color: rgba(255, 255, 255, 0.2);
+    border: 1px solid var(--border-ash);
+    border-radius: 50px;
+}
+.navIcon {
+    width: 0.6rem;
+    color: var(--wizard);
+}

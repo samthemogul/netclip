@@ -2,18 +2,38 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 10px;
-    padding: 15px 25px;
-    border-radius: 50px;
     font-size: 1rem;
     font-weight: 600;
     transition: 0.2s all ease-in;
     cursor: pointer;
 }
 .white-btn {
+    gap: 10px;
+    padding: 15px 25px;
+    border-radius: 50px;
     background-color: var(--wizard);
     color: var(--dark);
 }
 .white-btn:hover {
+    background-color: var(--light-grey);
+}
+.navbutton {
+    display: block;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+}
+.navbutton:hover, .navbutton.active {
+    background-color: var(--border-ash);
+}
+.glass-btn {
+    gap: 10px;
+    padding: 15px 25px;
+    border-radius: 50px;
+    background-color: rgba(255, 255, 255, 0.2);
+    color: var(--wizard);
+    border: 1px solid var(--border-ash);
+}
+.glass-btn:hover {
     background-color: var(--light-grey);
 }

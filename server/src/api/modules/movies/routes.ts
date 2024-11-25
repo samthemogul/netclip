@@ -1,10 +1,11 @@
 import express from 'express'
+import MovieController from './controllers'
 
 const router = express.Router()
+const movieController = new MovieController()
 
 
-router.get('/latest', (req, res) => {
-    res.json("Movies")
-})
+
+router.get('/top', movieController.getTopMovies)
 
 export default router
