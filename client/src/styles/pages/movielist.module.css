@@ -1,0 +1,14 @@
+.textHeader {
+    font-size: 2rem;
+    color: var(--wizard);
+    font-weight: 700;
+    padding: 100px 0 40px 0;
+    text-align: center;
+}
+.movieListContainer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    padding: 0 100px;
+}

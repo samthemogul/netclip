@@ -1,7 +1,7 @@
 "use client";
 
 // REACT/NEXT LIBS
-import { useRouter } from "next/router";
+import { usePathname, useRouter } from "next/navigation";
 
 // COMPONENTS
 import Button from "./Button";
@@ -14,6 +14,24 @@ import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import styles from "@/styles/components/nav.module.css";
 
 const DesktopNav = () => {
+  const router = useRouter();
+  const pathname = usePathname();
+  const rootPath = pathname.split('/')[1]
+  const isRootPath = pathname.split('/').length == 2 ? true : false;
+
+  const goToHome = () => {
+    router.push("/explore");
+  }
+  const goToWatchlist = () => {
+    router.push("/watchlist");
+  }
+  const goToHistory = () => {
+    router.push("/history");
+  }
+  const goToSettings = () => {
+    router.push("/settings");
+  }
+
   return (
     <div className={styles.deskNavContainer}>
       <Button
@@ -22,8 +40,8 @@ const DesktopNav = () => {
             className={styles.navIcon}
           />
         }
-        onClick={() => {}}
-        type={"navbutton"}
+        onClick={goToHome}
+        type={rootPath  == "explore" && isRootPath ? "activenavbtn" : "navbutton"}
       />
       <Button
         icon={
@@ -31,8 +49,8 @@ const DesktopNav = () => {
             className={styles.navIcon}
           />
         }
-        onClick={() => {}}
-        type={"navbutton"}
+        onClick={goToWatchlist}
+        type={rootPath == "watchlist" && isRootPath ? "activenavbtn" : "navbutton"}
       />
       <Button
         icon={
@@ -40,8 +58,8 @@ const DesktopNav = () => {
             className={styles.navIcon}
           />
         }
-        onClick={() => {}}
-        type={"navbutton"}
+        onClick={goToHistory}
+        type={rootPath == "history" && isRootPath ? "activenavbtn" : "navbutton"}
       />
       <Button
         icon={
@@ -49,8 +67,8 @@ const DesktopNav = () => {
             className={styles.navIcon}
           />
         }
-        onClick={() => {}}
-        type={"navbutton"}
+        onClick={goToSettings}
+        type={rootPath == "settings" && isRootPath ? "activenavbtn" : "navbutton"}
       />
     </div>
   );

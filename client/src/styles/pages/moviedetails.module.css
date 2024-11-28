@@ -3,3 +3,115 @@
     flex-direction: column;
     margin-top: 100px;
 }
+.heroContainer {
+    display: grid;
+    grid-template-columns: 50% 50%;
+    gap: 20px;
+    padding: 20px 150px;
+}
+.movieImageContainer {
+    display: flex;
+    width: 100%;
+    height: 800px;
+    justify-content: center;
+    position: relative;
+}
+.imageWrapper {
+    width: 500px;
+    height: 700px;
+    overflow: hidden;
+    border-radius: 30px;
+}
+.movieImage {
+    width: 100%;
+    height: 100%;
+    object-fit: fill;
+}
+.movieDetails {
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+    gap: 20px;
+}
+.movieTitle {
+    font-size: 5rem;
+    color: var(--wizard);
+    font-weight: 800;
+}
+.imdbAndYearInfo {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+.imdbRating {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    padding-right: 20px;
+    border-right: 1px solid var(--border-ash);
+}
+.imdbLogo {
+    background-color: var(--warm);
+    border-radius: 2px;
+    padding: 3px 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.imdbLogoText {
+    font-size: 0.9rem;
+    color: var(--dark);
+    font-weight: 700
+}
+.ratingText {
+    font-size: 1rem;
+    color: var(--wizard);
+    font-weight: 700;
+    padding: 0 5px;
+}
+.movieDescription {
+    font-size: 1.2rem;
+    color: var(--wizard);
+}
+.genres {
+    display: flex;
+    gap: 10px;
+}
+.buttonContainer {
+    display: flex;
+    gap: 20px; 
+}
+.transIcon {
+    color: var(--wizard);
+    font-size: 3rem;
+}
+.transIconBlack {
+    color: var(--dark);
+    font-size: 3rem;
+}
+.castHeader {
+    color: var(--wizard);
+    font-size: 1rem;
+}
+.casts {
+    display: flex;
+    gap: 20px;
+}
+.actor {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100px;
+    border-top-right-radius: 10px;
+    border-top-left-radius: 10px;
+    overflow: hidden;
+}
+.actorImage {
+    width: 100%;
+    height: 120px;
+}
+.actorName {
+    font-size: 0.8rem;
+    color: var(--wizard);
+    font-weight: 700;
+}

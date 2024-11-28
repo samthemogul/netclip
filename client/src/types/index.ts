@@ -24,11 +24,22 @@ export interface IMovie {
   imdbId: string;
   title: string;
   year: number;
-  rating: string;
-  description: string;
-  genre: string[];
+  rating?: string;
+  description?: string;
+  genre?: string[];
   image: string;
-  imdb_link: string;
+  imdb_link?: string;
+}
+
+export interface SearchedMovie {
+  id: string;
+  title: string;
+  year: number;
+  type: string;
+  image: string;
+  image_large: string;
+  api_path: string;
+  imdb: string;
 }
 
 export interface IUser {

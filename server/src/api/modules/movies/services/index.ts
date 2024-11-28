@@ -72,7 +72,7 @@ class MovieService {
         return { data: cachedMovie, error: null};
       } else {
         const response = await axios.get(
-          `https://imdb146.p.rapidapi.com//v1/title/?id=${imdbId}`,
+          `https://imdb146.p.rapidapi.com/v1/title/?id=${imdbId}`,
           {
             headers: {
               "x-rapidapi-key": process.env.RAPID_API_KEY,
@@ -162,6 +162,29 @@ class MovieService {
         }
       }
       return { data, error}
+    } catch (error) {
+      return { error: error.message, data: null };
+    }
+  }
+
+  async searchMovies(query: string) {
+    try {
+      let error = null;
+      let data = null;
+      const response = await axios.get(
+        `https://imdb-api12.p.rapidapi.com/search?query=${query}`,
+        {
+          headers: {
+            "x-rapidapi-key": process.env.RAPID_API_KEY,
+            "x-rapidapi-host": "imdb-api12.p.rapidapi.com",
+          },
+        }
+      );
+      if (response.status === 200) {
+        const movies = response.data.results;
+        data = movies
+      }
+      return { data, error };
     } catch (error) {
       return { error: error.message, data: null };
     }

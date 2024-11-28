@@ -4,6 +4,8 @@ import { ClientError, errorHandler } from "../../libs/handlers/error";
 import authRoutes from "../modules/auth/routes"
 import userRoutes from "../modules/user/routes"
 import movieRoutes from "../modules/movies/routes"
+import watchlistRoutes from "../modules/watchlist/routes"
+import watchHistoryRoutes from "../modules/watchlist/history.routes"
 
 class Router {
   private app: express.Application;
@@ -21,6 +23,12 @@ class Router {
   }
   public configMovieRoutes() {
     this.app.use("/api/movies", this.jwtService.verifyToken, movieRoutes);
+  }
+  public configWatchlistRoutes() {
+    this.app.use("/api/watchlist", this.jwtService.verifyToken, watchlistRoutes);
+  }
+  public configWatchHistoryRoutes() {
+    this.app.use("/api/history", this.jwtService.verifyToken, watchHistoryRoutes);
   }
   public configErrorHandler() {
     this.app.use((req, res, next) => {

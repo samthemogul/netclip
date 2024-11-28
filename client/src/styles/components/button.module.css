@@ -23,7 +23,14 @@
     height: 50px;
     border-radius: 50%;
 }
-.navbutton:hover, .navbutton.active {
+.navbutton:hover {
+    background-color: var(--border-ash);
+}
+.activenavbtn {
+    display: block;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
     background-color: var(--border-ash);
 }
 .glass-btn {

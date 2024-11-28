@@ -1,0 +1,6 @@
+model WatchList {
+    id     String  @id @default(uuid())
+    userId String  @unique
+    movies Movie[] @relation("WatchListMovies")
+    User   User    @relation(fields: [userId], references: [id])
+}

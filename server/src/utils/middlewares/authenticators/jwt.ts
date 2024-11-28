@@ -15,7 +15,9 @@ class JwtService implements IJwt {
     try {
       const user = req.user;
       if (user) {
-        const token = jwt.sign({ user: user }, process.env.SESSION_SECRET, { expiresIn: "24h" });
+        const token = jwt.sign({ user: user }, process.env.SESSION_SECRET, {
+          expiresIn: "24h",
+        });
         res.locals.token = token;
         next();
       } else {
@@ -42,6 +44,9 @@ class JwtService implements IJwt {
             throw new AuthError("Token is blacklisted");
           } else {
             const decoded = jwt.verify(token, process.env.SESSION_SECRET);
+            if (!decoded) {
+              throw new AuthError("Invalid or Expired");
+            }
             req.user = decoded;
             next();
           }
@@ -50,7 +55,15 @@ class JwtService implements IJwt {
         throw new AuthError("No token provided");
       }
     } catch (error) {
-      next(error);
+      let err: AuthError;
+      if (error.name === "TokenExpiredError") {
+        err = new AuthError("Token has expired");
+      } else if (error.name === "JsonWebTokenError") {
+        err = new AuthError("Invalid token");
+      } else {
+        err = new AuthError("An unknown error occurred");
+      }
+      next(err);
     }
   };
 

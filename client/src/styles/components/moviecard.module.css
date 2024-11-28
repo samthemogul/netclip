@@ -35,6 +35,10 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    transition: all 0.3s ease;
+}
+.movieCardTitle:hover {
+    text-decoration: underline;
 }
 .movieCardDescription {
     font-size: 0.9rem;

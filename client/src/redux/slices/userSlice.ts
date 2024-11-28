@@ -11,24 +11,25 @@ const userSlice = createSlice({
     photoUrl: "",
   },
   reducers: {
-    login(state, action){
-        const credentials = action.payload
-        state.accessToken = credentials.token;
-        state.id = credentials.userId
+    login(state, action) {
+      const credentials = action.payload;
+      state.accessToken = credentials.token;
+      state.id = credentials.userId;
     },
     setUser(state, action) {
-        const user = action.payload;
-        state.firstname = user.firstname;
-        state.lastname = user.lastname;
-        state.email = user.email;
-        state.photoUrl = user.photoUrl
+      const user = action.payload;
+      state.firstname = user.firstname;
+      state.lastname = user.lastname;
+      state.email = user.email;
+      state.photoUrl = user.photoUrl;
     },
-    logout(state){
-        state.firstname = "";
-        state.lastname = "";
-        state.email = "";
-        state.photoUrl = "";
-        state.accessToken = ""
+    logout(state) {
+      state.id = "";
+      state.firstname = "";
+      state.lastname = "";
+      state.email = "";
+      state.photoUrl = "";
+      state.accessToken = "";
     },
   },
 });

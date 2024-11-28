@@ -1,5 +1,8 @@
 .sliderContainer {
-    padding: 10px 50px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 70px;
 }
 .itemClass {
     padding: 0 50px;

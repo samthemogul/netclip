@@ -168,5 +168,19 @@
     font-size: 2.5rem;
     color: var(--wizard);
     font-weight: 700;
-    padding-left: 50px;
+}
+.pageSubTitleContainer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 50px;
+}
+.pageSubTitleBtn {
+    font-size: 1.3rem;
+    color: var(--wizard);
+    font-weight: 700;
+    transition: 0.3 all ease;
+}
+.pageSubTitleBtn:hover {
+    text-decoration: underline;
 }

@@ -19,7 +19,7 @@ class Uservalidator {
       } else {
         const errorMessages = []
         for (const err of error.details) {
-          errorMessages.push(err.message)
+          errorMessages.push(err.message) 
         }
         throw new ValidateError(errorMessages.join(','))
       }

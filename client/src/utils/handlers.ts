@@ -1,4 +1,4 @@
-import { TopMovie, IUser } from "@/types";
+import { TopMovie, SearchedMovie, IUser } from "@/types";
 
 export const authenticateUser = async () => {
   try {
@@ -71,3 +71,54 @@ export const getTopMovies = async (accessToken: string) => {
     return { movies: null, error };
   }
 };
+
+export const getMovie = async (accessToken: string, imdbId: string) => {
+  try {
+    let movie = null;
+    let error: Error | null = null;
+
+    const res = await fetch(`http://localhost:4000/api/movies/${imdbId}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+
+      },
+    });
+    const data = await res.json()
+    if (res.status == 200) {
+      movie = data.movie;
+      return { movie, error };
+    }
+    error = new Error(data.message);
+    return { movie, error };    
+  } catch (error: any) {
+    error = new Error(error.message);
+    return { movie: null, error };
+  }
+}
+
+export const searchMovies = async (accessToken: string, query: string) => {
+  try {
+    let movies: SearchedMovie[] | null = null;
+    let error: Error | null = null;
+
+    const res = await fetch(`http://localhost:4000/api/movies/search/${query}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+
+      },
+    });
+    const data = await res.json()
+    if (res.status == 200) {
+      movies = data.results;
+      return { movies, error };
+    }
+    error = new Error(data.message);
+    return { movies, error };
+  } catch (error: any) {
+    return { movies: null, error };
+  }
+}

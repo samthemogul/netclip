@@ -59,6 +59,8 @@ class AppController {
     appRouter.configAuthRoutes();
     appRouter.configUserRoutes()
     appRouter.configMovieRoutes()
+    appRouter.configWatchlistRoutes()
+    appRouter.configWatchHistoryRoutes()
     appRouter.configErrorHandler();
   }
 
