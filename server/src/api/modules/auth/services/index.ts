@@ -1,15 +1,18 @@
 import UserRepository from "../../user/repository";
+import MovieListsRepository from "../../watchlist/repository";
 import nodemailer from "nodemailer";
 import { ClientError } from "../../../../libs/handlers/error";
 import { ProviderResponse } from "../../../../types";
 import validate from "deep-email-validator";
 import { OAuth2Client } from "google-auth-library";
 import { redisService } from "../../../../utils/caches/redis";
+import logger from "../../../../libs/loggers/winston";
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 
 const userRepository = new UserRepository();
+const movieListsRepository = new MovieListsRepository();
 
 class AuthService {
   register = async ({
@@ -43,6 +46,14 @@ class AuthService {
           if (!createdUser) {
             error = new ClientError("User could not be created");
           } else {
+            setImmediate(async() => {
+              try {
+                await movieListsRepository.createNewWatchList(createdUser.id);
+                await movieListsRepository.createNewWatchHistory(createdUser.id);
+              } catch (error) {
+                logger.error(error.message)
+              }
+            })
             data = {
               id: createdUser.id,
               firstname: createdUser.firstname,

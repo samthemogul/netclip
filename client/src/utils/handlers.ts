@@ -86,6 +86,7 @@ export const getMovie = async (accessToken: string, imdbId: string) => {
       },
     });
     const data = await res.json()
+    console.log(data)
     if (res.status == 200) {
       movie = data.movie;
       return { movie, error };

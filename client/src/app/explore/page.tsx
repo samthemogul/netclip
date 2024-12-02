@@ -11,11 +11,13 @@ import Link from "next/link";
 import isAuth from "@/containers/IsAuth";
 import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
+import CheckIcon from '@mui/icons-material/Check';
 import PageLoader from "../loading";
 import DesktopNav from "@/components/DesktopNav";
 import Genre from "@/components/Genre";
 import TopMovies from "@/containers/TopMovies";
 import SearchBoxHeader from "@/components/SearchBoxHeader";
+import FeaturedHero from "@/components/FeaturedHero";
 
 // MISC
 import styles from "@/styles/pages/explore.module.css";
@@ -31,8 +33,9 @@ const ExplorePage = () => {
   const router = useRouter();
   const dispatch = useDispatch();
   const [userDetails, setUserDetails] = useState<any>(null);
-  const [movies, setMovies] = useState<TopMovie[] | null>(null);
+  const [movies, setMovies] = useState<TopMovie[]>([]);
   const [loadingPage, setLoadingPage] = useState<boolean>(true);
+  const [ addedFeatured, setAddedFeatured ] = useState<boolean>(false)
 
   const fetchUserAndMovieDetails = async () => {
     const { user, error } = await fetchUser(
@@ -45,7 +48,7 @@ const ExplorePage = () => {
       return;
     }
     const movieResults = await getTopMovies(stateUser.accessToken);
-    setMovies(movieResults.movies);
+    setMovies(movieResults.movies as TopMovie[]);
     setUserDetails(user);
     dispatch(
       userActions.setUser({
@@ -55,8 +58,13 @@ const ExplorePage = () => {
         photoUrl: user.photoUrl,
       })
     );
-    setLoadingPage(false);
+    setLoadingPage(false)
   };
+
+  const addFeaturedToWatchList = () => {
+    const featuredMovie = movies[0];
+    setAddedFeatured(true)
+  }
 
   const goToMovie = (imdbId: string) => {
     router.push(`/explore/movies/${imdbId}`);
@@ -87,13 +95,7 @@ const ExplorePage = () => {
       {/* Featured Movie */}
       {movies && movies[0] ? (
         <div className={styles.featuredMovieContainer}>
-          <Image
-            src={movies[0].big_image}
-            alt={movies[0].title}
-            width={1000}
-            height={1000}
-            className={styles.featuredMovieImage}
-          />
+          <FeaturedHero user={stateUser} movie={movies[0]} />
           <div className={styles.featuredMovieDetails}>
             <motion.h1
               initial={{ opacity: 0, x: -20 }}
@@ -117,25 +119,7 @@ const ExplorePage = () => {
               </div>
               <p className={styles.ratingText}>{movies[0].year}</p>
             </motion.div>
-            <motion.p
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 1 }}
-              className={styles.featuredMovieDescripton}
-            >
-              {movies[0].description}
-            </motion.p>
-            {/* Genres */}
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1 }}
-              className={styles.genre}
-            >
-              {movies[0].genre.map((g, index) => (
-                <Genre key={index} genre={g} />
-              ))}
-            </motion.div>
+            
             {/* ACtions */}
             <motion.div
               initial={{ opacity: 0, y: -20 }}
@@ -149,9 +133,9 @@ const ExplorePage = () => {
                 type={"white-btn"}
               />
               <Button
-                icon={<AddRoundedIcon className={styles.transIcon} />}
-                onClick={() => {}}
-                text={"Add to Watchlist"}
+                icon={ addedFeatured ? <CheckIcon className={styles.transIcon} /> : <AddRoundedIcon className={styles.transIcon} />}
+                onClick={addFeaturedToWatchList}
+                text={ addedFeatured ? "Added" : "Add to Watchlist"}
                 type={"glass-btn"}
               />
             </motion.div>
@@ -163,7 +147,9 @@ const ExplorePage = () => {
       <div className={styles.topMoviesWrapper}>
         <div className={styles.pageSubTitleContainer}>
           <h1 className={styles.pageSubTitle}>Top Movies</h1>
-          <Link href={'/'} className={styles.pageSubTitleBtn}>See More</Link>
+          <Link href={"/"} className={styles.pageSubTitleBtn}>
+            See More
+          </Link>
         </div>
 
         <TopMovies movies={movies ? movies.slice(1, 9) : []} />
@@ -171,9 +157,11 @@ const ExplorePage = () => {
 
       {/* Recommended Movies */}
       <div className={styles.topMoviesWrapper}>
-      <div className={styles.pageSubTitleContainer}>
+        <div className={styles.pageSubTitleContainer}>
           <h1 className={styles.pageSubTitle}>For You</h1>
-          <Link href={'/'} className={styles.pageSubTitleBtn}>See More</Link>
+          <Link href={"/"} className={styles.pageSubTitleBtn}>
+            See More
+          </Link>
         </div>
         <TopMovies movies={movies ? movies.slice(9, 20) : []} />
       </div>

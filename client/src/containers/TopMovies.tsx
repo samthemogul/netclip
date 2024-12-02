@@ -19,9 +19,9 @@ interface TopMoviesProp {
 }
 
 const TopMovies = ({ movies } : TopMoviesProp) => {
-    useEffect(() => {
-        console.log(movies)
-    }, [])
+    // useEffect(() => {
+    //     console.log(movies)
+    // }, [])
     return (
         <div>
             <CardCarousel>

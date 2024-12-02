@@ -4,10 +4,18 @@
     margin-top: 100px;
 }
 .heroContainer {
+    position: absolute;
+    bottom: 10%;
     display: grid;
-    grid-template-columns: 50% 50%;
+    grid-template-columns: 100%;
     gap: 20px;
     padding: 20px 150px;
+}
+.mainBody {
+    display: flex;
+    flex-direction: column;
+    padding: 20px 150px;
+    gap: 20px;
 }
 .movieImageContainer {
     display: flex;
@@ -34,9 +42,11 @@
     gap: 20px;
 }
 .movieTitle {
-    font-size: 5rem;
+    font-size: 3rem;
+    text-transform: uppercase;
     color: var(--wizard);
     font-weight: 800;
+    max-width: 500px;
 }
 .imdbAndYearInfo {
     display: flex;

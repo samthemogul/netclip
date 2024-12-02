@@ -22,7 +22,7 @@ class Router {
     this.app.use("/api/users", this.jwtService.verifyToken, userRoutes);
   }
   public configMovieRoutes() {
-    this.app.use("/api/movies", this.jwtService.verifyToken, movieRoutes);
+    this.app.use("/api/movies", movieRoutes);
   }
   public configWatchlistRoutes() {
     this.app.use("/api/watchlist", this.jwtService.verifyToken, watchlistRoutes);

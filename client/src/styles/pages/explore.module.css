@@ -105,11 +105,13 @@
     z-index: 5;
     display: flex;
     flex-direction: column;
+    bottom: 10%;
     gap: 30px;
 }
 .featuredMovieTitle {
-    font-size: 5rem;
-    max-width: 300px;
+    font-size: 4rem;
+    text-transform: uppercase;
+    max-width: 500px;
     font-weight: 900;
     color: var(--wizard);
 }

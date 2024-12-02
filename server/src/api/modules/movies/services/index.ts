@@ -60,6 +60,7 @@ class MovieService {
 
   async getMovie(imdbId: string) {
     try {
+      console.log("getting movie")
       let error = null;
       let data = null;
       const getCachedMovie = async (id: string) => {
@@ -68,9 +69,11 @@ class MovieService {
         return JSON.parse(cachedMovie);
       };
       const cachedMovie = await getCachedMovie(imdbId);
+      console.log(cachedMovie)
       if (cachedMovie) {
         return { data: cachedMovie, error: null};
       } else {
+        console.log("fetching from api", imdbId)
         const response = await axios.get(
           `https://imdb146.p.rapidapi.com/v1/title/?id=${imdbId}`,
           {
@@ -86,14 +89,18 @@ class MovieService {
           const movieToCache = {
             id: movie.id,
             title: movie.titleText.text,
-            releaseYear : movie.releaseYear.year,
+            releaseYear: movie.releaseYear.year,
             rating: movie.ratingsSummary.aggregateRating,
             image: movie.primaryImage.url,
-            
+            videos: movie.primaryVideos.edges[0]?.node?.playbackURLs?.filter((pUrl: any) => pUrl.videoMimeType == "MP4") || [], 
+            description: movie.plot.plotText?.plainText || null,
+            actors: movie.cast.edges.slice(0, 5) || [],
+            genres: movie.genres.genres.map((genre: any) => genre.text),
           }
+          console.log(movieToCache)
           setImmediate(async () => {
             try {
-              await redisService.set(`movie:${imdbId}`, JSON.stringify(movie));
+              await redisService.set(`movie:${imdbId}`, JSON.stringify(movieToCache));
               await redisService.setExpirationTime(
                 `movie:${imdbId}`,
                 60 * 60 * 24
@@ -102,7 +109,7 @@ class MovieService {
               logger.error("Failed to cache movie");
             }
           });
-          return { data: movie, error: null};
+          return { data: movieToCache, error: null};
         } else {
           error =  new ServerError(error.message);
         }

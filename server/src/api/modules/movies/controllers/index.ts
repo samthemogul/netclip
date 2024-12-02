@@ -49,6 +49,21 @@ class MovieController {
       next(error);
     }
   }
+
+  async getTrailer(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { videoId } = req.params
+      const { data, error} = await movieService.getTrailer(videoId)
+      if (error) {
+        throw error;
+      }
+      if (!data) {
+        throw new Error("Trailer not found");
+      }
+    } catch (error) {
+      next(error)
+    }
+  }
 }
 
 export default MovieController;
