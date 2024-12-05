@@ -1,5 +1,9 @@
 model Genre {
-    id     String  @id @default(uuid())
-    name   String  @unique
-    movies Movie[] @relation("MovieGenres")
+    id                        String            @id @default(uuid())
+    name                      String            @unique
+    movies                    Movie[]           @relation("MovieGenres")
+    likedGenrePreferences     UserPreferences[] @relation("LikedGenresPreferences")
+    dislikedGenrePreferences  UserPreferences[] @relation("DisLikedGenresPreferences")
+
+    @@index([name])
 }

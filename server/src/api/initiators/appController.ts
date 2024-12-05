@@ -6,8 +6,10 @@ import bodyParser from "body-parser";
 import helmet from "helmet";
 import dotenv from "dotenv";
 import Router from "./router";
+import mongoose from "mongoose";
 import { initializeRedis } from "../../utils/caches/redis";
 import logger from "../../libs/loggers/winston";
+import { dailyStreakMonitoring } from "../modules/user/services/streakCron";
 import swaggerUi from "swagger-ui-express";
 import swaggerJsdoc from "swagger-jsdoc";
 
@@ -57,10 +59,11 @@ class AppController {
   private configureRouting() {
     const appRouter = new Router(this.app);
     appRouter.configAuthRoutes();
-    appRouter.configUserRoutes()
-    appRouter.configMovieRoutes()
-    appRouter.configWatchlistRoutes()
-    appRouter.configWatchHistoryRoutes()
+    appRouter.configUserRoutes();
+    appRouter.configMovieRoutes();
+    appRouter.configWatchlistRoutes();
+    appRouter.configWatchHistoryRoutes();
+    appRouter.configNotificationroutes();
     appRouter.configErrorHandler();
   }
 
@@ -79,6 +82,10 @@ class AppController {
     this.app.use(cors(this.corsOptions));
   }
 
+  private setupCronJobs() {
+    dailyStreakMonitoring.start();
+  }
+
   // Connect to Redis data-store
   private setupRedis() {
     initializeRedis();
@@ -89,13 +96,22 @@ class AppController {
     try {
       this.enableMiddlewares();
       this.configureRouting();
+      this.setupCronJobs();
       this.setupRedis();
-      this.app.listen(this.port || 4000, () => {
+      mongoose
+        .connect(process.env.MONGODB_URL)
+        .then(() => {
+          logger.info("Mongo DB connected");
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+      return this.app.listen(this.port || 4000, () => {
         logger.info(`NetClip Server listening on the port ${this.port}`);
       });
     } catch (error) {
-        logger.error(`Ran into some issues while starting the server: ${error}`)
-        process.exit(1)
+      logger.error(`Ran into some issues while starting the server: ${error}`);
+      process.exit(1);
     }
   }
 }

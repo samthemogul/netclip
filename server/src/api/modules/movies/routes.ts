@@ -10,6 +10,7 @@ router.get('/top', movieController.getTopMovies)
 router.get('/:imdbId', movieController.getMovie)
 router.get('/search/:query', movieController.searchMovies)
 router.get('/trailer/:videoId', movieController.getTrailer)
+router.get('/recommendations/:userId', movieController.getRecommendations)
 
 
 export default router

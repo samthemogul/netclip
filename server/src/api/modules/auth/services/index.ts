@@ -10,7 +10,6 @@ import logger from "../../../../libs/loggers/winston";
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
-
 const userRepository = new UserRepository();
 const movieListsRepository = new MovieListsRepository();
 
@@ -19,7 +18,7 @@ class AuthService {
     firstname,
     lastname,
     email,
-    photoUrl
+    photoUrl,
   }: {
     firstname: string;
     lastname: string;
@@ -41,25 +40,31 @@ class AuthService {
             firstname,
             lastname,
             email,
-            photoUrl
+            photoUrl,
           });
           if (!createdUser) {
             error = new ClientError("User could not be created");
           } else {
-            setImmediate(async() => {
+            setImmediate(async () => {
               try {
+                await redisService.set(
+                  `userId:id:${createdUser.id}`,
+                  JSON.stringify(createdUser)
+                );
                 await movieListsRepository.createNewWatchList(createdUser.id);
-                await movieListsRepository.createNewWatchHistory(createdUser.id);
+                await movieListsRepository.createNewWatchHistory(
+                  createdUser.id
+                );
               } catch (error) {
-                logger.error(error.message)
+                logger.error(error.message);
               }
-            })
+            });
             data = {
               id: createdUser.id,
               firstname: createdUser.firstname,
               lastname: createdUser.lastname,
               email: createdUser.email,
-              photoUrl: createdUser.photoUrl
+              photoUrl: createdUser.photoUrl,
             };
           }
         }
@@ -69,7 +74,6 @@ class AuthService {
       return { error, data: null };
     }
   };
-
 
   verifyGoogleToken = async (token: string): Promise<ProviderResponse> => {
     let error = null;
@@ -87,7 +91,7 @@ class AuthService {
           firstname: payload.given_name,
           lastname: payload.family_name,
           email: payload.email,
-          photoUrl: payload.picture
+          photoUrl: payload.picture,
         };
       }
       return { error, data };
@@ -105,21 +109,25 @@ class AuthService {
         error = new ClientError("User does not exist");
         return { error, data };
       }
+      setImmediate(async () => {
+        try {
+          await redisService.set(`userId:id:${user.id}`, JSON.stringify(user));
+        } catch (error) {
+          logger.error(error.message);
+        }
+      });
       data = {
         id: user.id,
         firstname: user.firstname,
         lastname: user.lastname,
         email: user.email,
-        photoUrl: user.photoUrl
+        photoUrl: user.photoUrl,
       };
       return { error, data };
     } catch (error) {
       return { error, data };
     }
   };
-
-  
-
 }
 
 export default AuthService;

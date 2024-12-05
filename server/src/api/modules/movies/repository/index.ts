@@ -114,7 +114,7 @@ class MovieRepository {
       });
       return watchList;
     } catch (error) {
-        throw error;
+      throw error;
     }
   };
 
@@ -136,54 +136,104 @@ class MovieRepository {
     rating: string;
   }) => {
     try {
-        const watchHistory = await prisma.$transaction(async (prisma) => {
-            const existingHistory = await prisma.watchList.findUnique({
-              where: { userId },
-            });
-            if (!existingHistory) {
-              throw new ServerError(
-                "Cannot add Movie to History: No existing history"
-              );
-            }
-            const existingMovie = await this.getMovie({
-              title,
-              description,
-              year,
-              imdbId,
-              genres,
-              rating,
-            });
-            if (!existingMovie) {
-              throw new ServerError("Movie not found");
-            }
-            await prisma.movie.update({
-                where: { id: existingMovie.id },
-                data: {
-                    datePlayed: new Date()
-                }
-            })
-            await prisma.watchHistory.update({
-              where: { id: existingHistory.id },
-              data: {
-                movies: {
-                  connect: { id: existingMovie.id },
-                },
-              },
-            });
-            // return all the movies in the history
-            const updatedWatchHistory = await prisma.watchList.findUnique({
-              where: { id: existingHistory.id },
-              include: {
-                movies: true,
-              },
-            });
-            return updatedWatchHistory;
-          });
-          return watchHistory;
+      const watchHistory = await prisma.$transaction(async (prisma) => {
+        const existingHistory = await prisma.watchList.findUnique({
+          where: { userId },
+        });
+        if (!existingHistory) {
+          throw new ServerError(
+            "Cannot add Movie to History: No existing history"
+          );
+        }
+        const existingMovie = await this.getMovie({
+          title,
+          description,
+          year,
+          imdbId,
+          genres,
+          rating,
+        });
+        if (!existingMovie) {
+          throw new ServerError("Movie not found");
+        }
+        await prisma.movie.update({
+          where: { id: existingMovie.id },
+          data: {
+            datePlayed: new Date(),
+          },
+        });
+        await prisma.watchHistory.update({
+          where: { id: existingHistory.id },
+          data: {
+            movies: {
+              connect: { id: existingMovie.id },
+            },
+          },
+        });
+        // return all the movies in the history
+        const updatedWatchHistory = await prisma.watchList.findUnique({
+          where: { id: existingHistory.id },
+          include: {
+            movies: true,
+          },
+        });
+        return updatedWatchHistory;
+      });
+      return watchHistory;
+    } catch (error) {}
+  };
+
+  removeMovieFromWatchlist = async ({
+    userId,
+    imdbId,
+  }: {
+    userId: string;
+    imdbId: string;
+  }) => {
+    try {
+      const watchList = await prisma.watchList.findUnique({
+        where: {
+          userId: userId,
+        },
+        include: {
+          movies: true,
+        }
+      });
+      if (!watchList) {
+        throw new ServerError("Watchlist not found");
+      }
+      const existingMovie = await prisma.movie.findUnique({
+        where: {
+          imdbId: imdbId,
+        },
+      });
+      if (!existingMovie) {
+        throw new ServerError("Movie not found");
+      }
+      const movieInWatchlist = watchList.movies.find(
+        (movie) => movie.imdbId === imdbId
+      );
+  
+      if (!movieInWatchlist) {
+        throw new ServerError("Movie is not in the watchlist");
+      }
+      // remove the movie from the watchlist
+      await prisma.watchList.update({
+        where: {
+          userId: userId,
+        },
+        data: {
+          movies: {
+            disconnect: { id: existingMovie.id },
+          },
+        },
+      });
+      return  watchList
     } catch (error) {
-        
+      throw error
     }
-  }
+  };
+  
 }
 
 export default MovieRepository;

@@ -1,0 +1,15 @@
+model UserPreferences {
+    id                          String   @id @default(uuid())
+    userId                      String   @unique
+    genres                      Genre[]  @relation("LikedGenresPreferences")
+    favoriteActors              String[] @default([])
+    watchlist                   String[] @default([])
+    watchedMovies               String[] @default([]) 
+    dislikedGenres              Genre[]  @relation("DisLikedGenresPreferences")
+    contentRatingPreference     String?
+    updatedAt                   DateTime @updatedAt
+
+    User                        User     @relation(fields: [userId], references: [id])
+
+    @@index([userId])
+}

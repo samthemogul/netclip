@@ -6,5 +6,7 @@ const userController = new UserController()
 
 
 router.get('/:userId', userController.getUser)
+router.get('/:userId/streak', userController.getStreak)
+router.put('/:userId/update-watch-date', userController.updateLastWatch)
 
 export default router

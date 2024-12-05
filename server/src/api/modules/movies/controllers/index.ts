@@ -64,6 +64,21 @@ class MovieController {
       next(error)
     }
   }
+  async getRecommendations(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { userId } = req.params;
+      const { data, error } = await movieService.getMovieRecommendations(userId);
+      if (error) {
+        throw error;
+      }
+      if (!data) {
+        throw new Error("No data found");
+      }
+      res.status(200).json({ success: true, recommendations: data });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export default MovieController;

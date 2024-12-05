@@ -34,6 +34,19 @@ class RedisService {
     }
   }
 
+  async scan(MATCH: string) {
+    let cursor = 0;
+    const keys: string[] = [];
+    do {
+      const scanResult = await this.client.scan(cursor, {
+        MATCH: MATCH,
+      });
+      cursor = scanResult.cursor;
+      keys.push(...scanResult.keys);
+    } while (cursor != 0);
+    return keys;
+  }
+
   async keys(pattern: string) {
     return this.client.keys(pattern);
   }

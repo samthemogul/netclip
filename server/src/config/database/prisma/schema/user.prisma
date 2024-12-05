@@ -1,16 +1,17 @@
 model User {
-    id             String       @id @default(uuid())
-    firstname      String
-    lastname       String
-    email          String       @unique
-    photoUrl       String
-    lastLogin      DateTime     @default(now())
-    lastWatch      DateTime     @default(now())
-    streakCount    Int          @default(0)
-    createdAt      DateTime     @default(now())
-    updatedAt      DateTime     @default(now()) @updatedAt
-    WatchHistory   WatchHistory?
-    WatchList      WatchList?
+    id           String           @id @default(uuid())
+    firstname    String
+    lastname     String
+    email        String           @unique
+    photoUrl     String
+    lastLogin    DateTime         @default(now())
+    lastWatch    DateTime         @default(now())
+    streakCount  Int              @default(0)
+    createdAt    DateTime         @default(now())
+    updatedAt    DateTime         @default(now()) @updatedAt
+    WatchHistory WatchHistory?
+    WatchList    WatchList?
+    userPreferences UserPreferences? // Renamed for consistency
 
     @@index([email])
 }
