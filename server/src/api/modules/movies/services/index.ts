@@ -64,7 +64,6 @@ class MovieService {
 
   async getMovie(imdbId: string) {
     try {
-      console.log("getting movie");
       let error = null;
       let data = null;
       const getCachedMovie = async (id: string) => {
@@ -73,11 +72,9 @@ class MovieService {
         return JSON.parse(cachedMovie);
       };
       const cachedMovie = await getCachedMovie(imdbId);
-      console.log(cachedMovie);
       if (cachedMovie) {
         return { data: cachedMovie, error: null };
       } else {
-        console.log("fetching from api", imdbId);
         const response = await axios.get(
           `https://imdb146.p.rapidapi.com/v1/title/?id=${imdbId}`,
           {
@@ -103,7 +100,6 @@ class MovieService {
             actors: movie.cast.edges.slice(0, 5) || [],
             genres: movie.genres.genres.map((genre: any) => genre.text),
           };
-          console.log(movieToCache);
           setImmediate(async () => {
             try {
               await redisService.set(
@@ -188,6 +184,80 @@ class MovieService {
     }
   }
 
+  async getMovieVideo(userId: string, imdbId: string, videoId: string) {
+    try {
+      let error = null;
+      let data = null;
+      const getCachedMovieVideo = async (imdbId: string) => {
+        const pattern = `movievideo:${imdbId}`;
+        const cachedVideo = await redisService.get(pattern);
+        const cachedVideodata = JSON.parse(cachedVideo);
+        return cachedVideodata;
+      };
+      const cachedVideo = await getCachedMovieVideo(imdbId);
+      if (cachedVideo) {
+        return { data: cachedVideo, error: null };
+      } else {
+        const response = await axios.get(
+          `https://imdb146.p.rapidapi.com/v1/video/?id=${videoId}`,
+          {
+            headers: {
+              "x-rapidapi-key": process.env.RAPID_API_KEY,
+              "x-rapidapi-host": "imdb146.p.rapidapi.com",
+            },
+          }
+        );
+        if (response.status === 200) {
+          const video = response.data;
+          setImmediate(async () => {
+            try {
+              const videoToCache = {
+                id: video.id,
+                titleId: video.primaryTitle.id,
+                titleText: video.primaryTitle.titleText.text,
+                videoUrl: video.playbackURLs.find(
+                  (url: any) => url.videoMimeType == "MP4"
+                ).url,
+                runtime: video.runtime.value,
+              };
+              await redisService.set(
+                `movievideo:${imdbId}`,
+                JSON.stringify(videoToCache)
+              );
+              await redisService.setExpirationTime(
+                `movievideo:${imdbId}`,
+                60 * 60 * 24
+              );
+            } catch (error) {
+              logger.error("Failed to cache video");
+            }
+          });
+          return { data: video, error: null };
+        } else {
+          error = new ServerError(error.message);
+        }
+      }
+      setImmediate(async () => {
+        try {
+          const { data, error } = await this.getMovie(imdbId);
+          if (error) {
+            throw new ServerError(error.message);
+          }
+          await userRepository.updateMoviesPreferences(userId, data.id);
+          data.genres.forEach(async (genre: string) => {
+            await userRepository.updateGenresPreferences(userId, genre);
+          });
+          await userRepository.updateLastWatch(userId);
+        } catch (error) {
+          logger.error("Failed to update last watch");
+        }
+      });
+      return { data, error };
+    } catch (error) {
+      return { error: error.message, data: null };
+    }
+  }
+
   async searchMovies(query: string) {
     try {
       let error = null;
@@ -212,35 +282,78 @@ class MovieService {
   }
   async getMovieRecommendations(userId: string) {
     try {
+      console.log("getting recommendations");
       let data = null;
       let error = null;
-      const userPreferences = await userRepository.getUserPreferences(userId);
-      if (!userPreferences) {
-        error = new ServerError("User Preferences not found");
-        return { data, error };
-      }
-      const genres = userPreferences.genres.map((genre) => genre.name);
-      const uniqueGenres = genres.filter(
-        (genre, index) => genres.indexOf(genre) === index
-      );
-      const actors = userPreferences.favoriteActors;
-      const watchedMovies = userPreferences.watchedMovies;
-
       const recommendations: IMovie[] = [];
-      if (genres.length > 0) {
-        const genreRecommendations =
-          await this.getRecommendationByGenres(uniqueGenres);
-        recommendations.push(...genreRecommendations);
+      const userPreferences = await userRepository.getUserPreferences(userId);
+      if (userPreferences) {
+        const genres = userPreferences.genres.map((genre) => genre.name);
+        const uniqueGenres = genres.filter(
+          (genre, index) => genres.indexOf(genre) === index
+        );
+        const actors = userPreferences.favoriteActors;
+        const watchedMovies = userPreferences.watchedMovies;
+        if (genres.length > 0) {
+          const genreRecommendations =
+            await this.getRecommendationByGenres(uniqueGenres);
+          recommendations.push(...genreRecommendations);
+        }
+        if (watchedMovies.length > 0) {
+          const watchedRecommendations =
+            await this.getRecommendationByWatchedMovies(watchedMovies);
+          recommendations.push(...watchedRecommendations);
+        }
+        const collaborativeRecommendations =
+          await this.getRecommendationByCollaborativeFiltering(userId);
+        recommendations.push(...collaborativeRecommendations);
       }
-      if (watchedMovies.length > 0) {
-        const watchedRecommendations =
-          await this.getRecommendationByWatchedMovies(watchedMovies);
-        recommendations.push(...watchedRecommendations);
+
+      console.log("Recc: ", recommendations);
+      if (recommendations.length > 0) {
+        data = recommendations;
+      } else {
+        const cachedRecommendations = await redisService.get(
+          `recommendations${userId}`
+        );
+        if (cachedRecommendations) {
+          data = JSON.parse(cachedRecommendations);
+        } else {
+          console.log("Fetching reccomendations from api");
+          const response = await axios.get(
+            "https://imdb236.p.rapidapi.com/imdb/most-popular-movies",
+            {
+              headers: {
+                "x-rapidapi-key": process.env.RAPID_API_KEY,
+                "x-rapidapi-host": "imdb236.p.rapidapi.com",
+              },
+            }
+          );
+          if (response.status == 200) {
+            const results = response.data.slice(10);
+            const movies: IMovie[] = results.map((movie: any) => {
+              return {
+                imdbId: movie.id,
+                title: movie.title,
+                year: movie.startYear,
+                rating: movie.averageRating,
+                image: movie.primaryImage,
+                description: movie.description,
+                genre: [""],
+              };
+            });
+            await redisService.set(
+              `recommendations${userId}`,
+              JSON.stringify(movies)
+            );
+            data = movies;
+          } else {
+            error = new ServerError(
+              "Could not fetch fresh movie recommendations"
+            );
+          }
+        }
       }
-      const collaborativeRecommendations =
-        await this.getRecommendationByCollaborativeFiltering(userId);
-      recommendations.push(...collaborativeRecommendations);
-      data = recommendations;
 
       return { data, error };
     } catch (error) {
@@ -318,7 +431,7 @@ class MovieService {
       throw error;
     }
   }
-  
+
   private async getRecommendationByActors(actors: string[]) {}
   private async getRecommendationByWatchedMovies(movies: string[]) {
     try {

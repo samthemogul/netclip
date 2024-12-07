@@ -14,26 +14,29 @@ import { Blocks } from "react-loader-spinner";
 import styles from "@/styles/pages/movielist.module.css";
 import { useSelector } from "react-redux";
 import isAuth from "@/containers/IsAuth";
-import { getTopMovies } from "@/utils/handlers";
-import { SearchedMovie, TopMovie } from "@/types";
+import { getWatchListMovies } from "@/utils/handlers";
+import { IMovie } from "@/types";
 
 const SearchResultPage = () => {
   const params = useParams();
   const query = params.query as string;
-  const [movieResult, setMovies] = useState<TopMovie[]>([]);
+  const [watchListMovies, setWatchlistMovies] = useState<IMovie[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const user = useSelector((state: any) => state.user);
 
   const getSearchResults = async () => {
-    const { movies, error } = await getTopMovies(user.accessToken);
+    const { watchlist, error } = await getWatchListMovies(
+      user.id,
+      user.accessToken
+    );
     if (error) {
       console.error(error);
       return;
     }
-    if (!movies) {
+    if (!watchlist) {
       return;
     }
-    setMovies(movies);
+    setWatchlistMovies(watchlist);
     setLoading(false);
   };
 
@@ -45,7 +48,7 @@ const SearchResultPage = () => {
     <div className={styles.mainPage}>
       <SearchBoxHeader userDetails={user} />
       <DesktopNav />
-      <h1 className={styles.textHeader}>Top Movies</h1>
+      <h1 className={styles.textHeader}>My Watchlist</h1>
       <div className={styles.movieListContainer}>
         {loading ? (
           <Blocks
@@ -56,18 +59,20 @@ const SearchResultPage = () => {
             wrapperClass="blocks-wrapper"
             visible={true}
           />
+        ) : watchListMovies.length < 1 ? (
+          <p className={styles.resultsText}>No Movies in watchlist yet</p>
         ) : (
-          movieResult.map((movie) => {
+          watchListMovies.map((movie) => {
             const movieData = {
               title: movie.title,
               image: movie.image,
               year: movie.year,
-              description: movie.description,
-              imdbId: movie.imdbid,
+              imdbId: movie.imdbId,
               rating: movie.rating,
               genre: movie.genre,
+              description: movie.description,
             };
-            return <MovieCard key={movie.id} movie={movieData} />;
+            return <MovieCard key={movie.imdbId} movie={movieData} />;
           })
         )}
       </div>

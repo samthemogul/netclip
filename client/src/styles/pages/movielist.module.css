@@ -12,3 +12,10 @@
     gap: 20px;
     padding: 0 100px;
 }
+.resultsText {
+    font-size: 1rem;
+    color: var(--wizard);
+    font-weight: 700;
+    padding: 40px 0 20px 0;
+    text-align: center;
+}

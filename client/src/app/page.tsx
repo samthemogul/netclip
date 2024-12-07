@@ -26,6 +26,7 @@ export default function Home() {
   const user = useSelector((state: RootState) => state.user);
 
   useEffect(() => {
+    localStorage.clear();
     const params = new URLSearchParams(window.location.search);
     const jwtToken = params.get("token");
     const userId = params.get("userId");

@@ -2,7 +2,6 @@ import { Queue, Worker } from "bullmq";
 import dotenv from "dotenv";
 dotenv.config();
 import logger from "../../../../libs/loggers/winston";
-import { redisService } from "../../../../utils/caches/redis";
 import { io } from "../../../../app";
 import MovieService from "../../movies/services";
 

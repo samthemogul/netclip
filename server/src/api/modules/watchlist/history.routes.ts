@@ -6,7 +6,7 @@ const movieListController = new MovieListController()
 
 
 
-router.post('/new/"userId', movieListController.addMovieToHistory)
+router.post('/new/:userId', movieListController.addMovieToHistory)
 router.get('/:userId', movieListController.getHistory)
 
 export default router

@@ -45,15 +45,13 @@ class AuthService {
           if (!createdUser) {
             error = new ClientError("User could not be created");
           } else {
+            await movieListsRepository.createNewWatchList(createdUser.id);
+            await movieListsRepository.createNewWatchHistory(createdUser.id);
             setImmediate(async () => {
               try {
                 await redisService.set(
                   `userId:id:${createdUser.id}`,
                   JSON.stringify(createdUser)
-                );
-                await movieListsRepository.createNewWatchList(createdUser.id);
-                await movieListsRepository.createNewWatchHistory(
-                  createdUser.id
                 );
               } catch (error) {
                 logger.error(error.message);

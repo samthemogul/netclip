@@ -11,15 +11,16 @@ import DesktopNav from "@/components/DesktopNav";
 import SearchBoxHeader from "@/components/SearchBoxHeader";
 import PageLoader from "@/app/loading";
 import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
+import HourglassBottomIcon from "@mui/icons-material/HourglassBottom";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
-import CheckIcon from '@mui/icons-material/Check';
+import CheckIcon from "@mui/icons-material/Check";
 
 // MISC
 import isAuth from "@/containers/IsAuth";
 import styles from "@/styles/pages/moviedetails.module.css";
 import { RootState } from "@/redux/store";
 import { IUser } from "@/types";
-import { getMovie } from "@/utils/handlers";
+import { addMovieToWatchList, getMovie } from "@/utils/handlers";
 import Genre from "@/components/Genre";
 import Button from "@/components/Button";
 
@@ -29,6 +30,7 @@ const MoviePage = () => {
   const [loadingMovie, setLoadingMovie] = useState<boolean>(true);
   const [movie, setMovie] = useState<any>(null);
   const [addedToWatchList, setAddedToWatchList] = useState<boolean>(false);
+  const [addingToWatchlist, setAddingToWatchList] = useState<boolean>(false);
 
   const getMovieDetails = async () => {
     try {
@@ -46,8 +48,30 @@ const MoviePage = () => {
     }
   };
 
-  const addToWatchList = () => {
-    setAddedToWatchList(true);
+  const addToWatchList = async () => {
+    const payload = {
+      title: movie.title,
+      description: movie.description,
+      image: movie.image,
+      year: movie.releaseYear.toString(),
+      imdbId: params.movieId as string,
+      genres: movie.genres,
+      rating: movie.rating.toString(),
+    };
+    if (!addedToWatchList) {
+      setAddedToWatchList(true);
+      setAddingToWatchList(true);
+      const waitlistResult = await addMovieToWatchList(
+        user.id,
+        user.accessToken,
+        payload
+      );
+      if (waitlistResult.error) {
+        console.error(waitlistResult.error);
+        return;
+      }
+    }
+    setAddingToWatchList(false);
   };
 
   useEffect(() => {
@@ -63,7 +87,7 @@ const MoviePage = () => {
       <SearchBoxHeader userDetails={user} />
       <DesktopNav />
       <div className={styles.movieDetailContainer}>
-        <video width="100%" height="700" autoPlay loop preload="auto">
+        <video width="100%" height="700" autoPlay muted loop preload="auto">
           <source src={movie.videos[0].url} type="video/mp4" />
           <track kind="subtitles" srcLang="en" label="English" />
           Your browser does not support the video tag.
@@ -92,9 +116,17 @@ const MoviePage = () => {
                 type={"white-btn"}
               />
               <Button
-                icon={ addedToWatchList ? <CheckIcon className={styles.transIcon} /> : <AddRoundedIcon className={styles.transIcon} />}
+                icon={
+                  addedToWatchList ? (
+                    <CheckIcon className={styles.transIcon} />
+                  ) : addingToWatchlist ? (
+                    <HourglassBottomIcon className={styles.transIcon} />
+                  ) : (
+                    <AddRoundedIcon className={styles.transIcon} />
+                  )
+                }
                 onClick={addToWatchList}
-                text={ addedToWatchList ? "Added" : "Add to Watchlist"}
+                text={addedToWatchList ? "Added" : "Add to Watchlist"}
                 type={"glass-btn"}
               />
             </div>

@@ -7,12 +7,14 @@ const movieListService = new MovieListService();
 class MovieListController {
   async addMovieToWatchList(req: Request, res: Response, next: NextFunction) {
     try {
-      const { userId, title, description, year, imdbId, genres, rating } =
+      const { userId } = req.params;
+      const { title, description, image, year, imdbId, genres, rating } =
         req.body;
       const { data, error } = await movieListService.addMovieToWatchList(
         userId,
         title,
         description,
+        image,
         year,
         imdbId,
         genres,
@@ -31,12 +33,14 @@ class MovieListController {
   }
   async addMovieToHistory(req: Request, res: Response, next: NextFunction) {
     try {
-      const { userId, title, description, year, imdbId, genres, rating } =
+      const { userId } = req.params;
+      const { title, description, image, year, imdbId, genres, rating } =
         req.body;
       const { data, error } = await movieListService.addMovieToHistory(
         userId,
         title,
         description,
+        image,
         year,
         imdbId,
         genres,

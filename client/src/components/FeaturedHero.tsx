@@ -18,7 +18,6 @@ const FeaturedHero = ({ movie, user }: FMprops) => {
       if (results.error) {
         console.error(results.error);
       } else {
-        console.log(results.movie.videos[0].url)
         setBannerTrailer(results.movie.videos[0].url);
       }
     };
@@ -27,7 +26,7 @@ const FeaturedHero = ({ movie, user }: FMprops) => {
   return (
     <>
       {bannerTrailer ? (
-        <video width="100%" height="700" autoPlay loop preload="auto">
+        <video width="100%" height="700" autoPlay muted loop preload="auto">
           <source src={bannerTrailer} type="video/mp4" />
           <track kind="subtitles" srcLang="en" label="English" />
           Your browser does not support the video tag.

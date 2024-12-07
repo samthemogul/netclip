@@ -11,7 +11,8 @@ import Link from "next/link";
 import isAuth from "@/containers/IsAuth";
 import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
-import CheckIcon from '@mui/icons-material/Check';
+import HourglassBottomIcon from "@mui/icons-material/HourglassBottom";
+import CheckIcon from "@mui/icons-material/Check";
 import PageLoader from "../loading";
 import DesktopNav from "@/components/DesktopNav";
 import Genre from "@/components/Genre";
@@ -23,9 +24,14 @@ import FeaturedHero from "@/components/FeaturedHero";
 import styles from "@/styles/pages/explore.module.css";
 import { motion } from "framer-motion";
 import { RootState } from "@/redux/store";
-import { fetchUser, getTopMovies } from "@/utils/handlers";
+import {
+  fetchUser,
+  getTopMovies,
+  getMovieRecommendations,
+  addMovieToWatchList,
+} from "@/utils/handlers";
 import { userActions } from "@/redux/slices/userSlice";
-import { TopMovie } from "@/types";
+import { IMovie, TopMovie } from "@/types";
 import Button from "@/components/Button";
 
 const ExplorePage = () => {
@@ -34,8 +40,11 @@ const ExplorePage = () => {
   const dispatch = useDispatch();
   const [userDetails, setUserDetails] = useState<any>(null);
   const [movies, setMovies] = useState<TopMovie[]>([]);
+  const [recommendations, setRemmendations] = useState<IMovie[]>([]);
   const [loadingPage, setLoadingPage] = useState<boolean>(true);
-  const [ addedFeatured, setAddedFeatured ] = useState<boolean>(false)
+  const [addingFeatureToWatch, setAddingFeatureToWatch] =
+    useState<boolean>(false);
+  const [addedFeatured, setAddedFeatured] = useState<boolean>(false);
 
   const fetchUserAndMovieDetails = async () => {
     const { user, error } = await fetchUser(
@@ -49,6 +58,11 @@ const ExplorePage = () => {
     }
     const movieResults = await getTopMovies(stateUser.accessToken);
     setMovies(movieResults.movies as TopMovie[]);
+    const recommendationResults = await getMovieRecommendations(
+      stateUser.id,
+      stateUser.accessToken
+    );
+    setRemmendations(recommendationResults.recommendations as IMovie[]);
     setUserDetails(user);
     dispatch(
       userActions.setUser({
@@ -58,13 +72,35 @@ const ExplorePage = () => {
         photoUrl: user.photoUrl,
       })
     );
-    setLoadingPage(false)
+    setLoadingPage(false);
   };
 
-  const addFeaturedToWatchList = () => {
+  const addFeaturedToWatchList = async () => {
     const featuredMovie = movies[0];
-    setAddedFeatured(true)
-  }
+    const payload = {
+      title: featuredMovie.title,
+      description: featuredMovie.description,
+      image: featuredMovie.image,
+      year: featuredMovie.year.toString(),
+      imdbId: featuredMovie.imdbid,
+      genres: featuredMovie.genre,
+      rating: featuredMovie.rating,
+    };
+    if (!addedFeatured) {
+      setAddedFeatured(true);
+      setAddingFeatureToWatch(true);
+      const waitlistResult = await addMovieToWatchList(
+        stateUser.id,
+        stateUser.accessToken,
+        payload
+      );
+      if (waitlistResult.error) {
+        console.error(waitlistResult.error);
+        return;
+      }
+    }
+    setAddingFeatureToWatch(false);
+  };
 
   const goToMovie = (imdbId: string) => {
     router.push(`/explore/movies/${imdbId}`);
@@ -119,7 +155,7 @@ const ExplorePage = () => {
               </div>
               <p className={styles.ratingText}>{movies[0].year}</p>
             </motion.div>
-            
+
             {/* ACtions */}
             <motion.div
               initial={{ opacity: 0, y: -20 }}
@@ -133,9 +169,17 @@ const ExplorePage = () => {
                 type={"white-btn"}
               />
               <Button
-                icon={ addedFeatured ? <CheckIcon className={styles.transIcon} /> : <AddRoundedIcon className={styles.transIcon} />}
+                icon={
+                  addedFeatured ? (
+                    <CheckIcon className={styles.transIcon} />
+                  ) : addingFeatureToWatch ? (
+                    <HourglassBottomIcon className={styles.transIcon} />
+                  ) : (
+                    <AddRoundedIcon className={styles.transIcon} />
+                  )
+                }
                 onClick={addFeaturedToWatchList}
-                text={ addedFeatured ? "Added" : "Add to Watchlist"}
+                text={addedFeatured ? "Added" : "Add to Watchlist"}
                 type={"glass-btn"}
               />
             </motion.div>
@@ -147,7 +191,7 @@ const ExplorePage = () => {
       <div className={styles.topMoviesWrapper}>
         <div className={styles.pageSubTitleContainer}>
           <h1 className={styles.pageSubTitle}>Top Movies</h1>
-          <Link href={"/"} className={styles.pageSubTitleBtn}>
+          <Link href={"/explore/movies/top"} className={styles.pageSubTitleBtn}>
             See More
           </Link>
         </div>
@@ -159,11 +203,11 @@ const ExplorePage = () => {
       <div className={styles.topMoviesWrapper}>
         <div className={styles.pageSubTitleContainer}>
           <h1 className={styles.pageSubTitle}>For You</h1>
-          <Link href={"/"} className={styles.pageSubTitleBtn}>
+          <Link href={"/explore/movies/for-you"} className={styles.pageSubTitleBtn}>
             See More
           </Link>
         </div>
-        <TopMovies movies={movies ? movies.slice(9, 20) : []} />
+        <TopMovies movies={recommendations ? recommendations.slice(0, 10) : []} />
       </div>
     </div>
   );

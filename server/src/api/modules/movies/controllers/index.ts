@@ -52,8 +52,8 @@ class MovieController {
 
   async getTrailer(req: Request, res: Response, next: NextFunction) {
     try {
-      const { videoId } = req.params
-      const { data, error} = await movieService.getTrailer(videoId)
+      const { videoId } = req.params;
+      const { data, error } = await movieService.getTrailer(videoId);
       if (error) {
         throw error;
       }
@@ -61,13 +61,14 @@ class MovieController {
         throw new Error("Trailer not found");
       }
     } catch (error) {
-      next(error)
+      next(error);
     }
   }
   async getRecommendations(req: Request, res: Response, next: NextFunction) {
     try {
       const { userId } = req.params;
-      const { data, error } = await movieService.getMovieRecommendations(userId);
+      const { data, error } =
+        await movieService.getMovieRecommendations(userId);
       if (error) {
         throw error;
       }
@@ -75,6 +76,25 @@ class MovieController {
         throw new Error("No data found");
       }
       res.status(200).json({ success: true, recommendations: data });
+    } catch (error) {
+      next(error);
+    }
+  }
+  async getMovieVideo(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { imdbId, userId, videoId } = req.body;
+      const { data, error } = await movieService.getMovieVideo(
+        userId,
+        imdbId,
+        videoId
+      );
+      if (error) {
+        throw error;
+      }
+      if (!data) {
+        throw new Error("No data found");
+      }
+      res.status(200).json({ success: true, video: data });
     } catch (error) {
       next(error);
     }

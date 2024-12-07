@@ -7,6 +7,7 @@ class MovieRepository {
   private getMovie = async ({
     title,
     description,
+    image,
     year,
     imdbId,
     genres,
@@ -14,42 +15,42 @@ class MovieRepository {
   }: {
     title: string;
     description: string;
+    image: string;
     year: string;
     imdbId: string;
     genres: string[];
     rating: string;
   }) => {
     try {
-      const newMovie = await prisma.$transaction(async (prisma) => {
-        const existingMovie = await prisma.movie.findUnique({
-          where: { imdbId },
-        });
-        if (existingMovie) {
-          return existingMovie;
-        }
-        const genreRecords = await Promise.all(
-          genres.map(async (genreName) => {
-            return await prisma.genre.upsert({
-              where: { name: genreName },
-              update: {},
-              create: { name: genreName },
-            });
-          })
-        );
-        const newMovie = await prisma.movie.create({
-          data: {
-            title,
-            description,
-            year,
-            imdbId,
-            rating,
-            genres: {
-              connect: genreRecords.map((genre) => ({ id: genre.id })),
-            },
-          },
-        });
-        return newMovie;
+      const existingMovie = await prisma.movie.findUnique({
+        where: { imdbId },
       });
+      if (existingMovie) {
+        return existingMovie;
+      }
+      const genreRecords = await Promise.all(
+        genres.map(async (genreName) => {
+          return await prisma.genre.upsert({
+            where: { name: genreName },
+            update: {},
+            create: { name: genreName },
+          });
+        })
+      );
+      const newMovie = await prisma.movie.create({
+        data: {
+          title,
+          description,
+          image,
+          year,
+          imdbId,
+          rating,
+          genres: {
+            connect: genreRecords.map((genre) => ({ id: genre.id })),
+          },
+        },
+      });
+
       return newMovie;
     } catch (error) {
       console.error(error);
@@ -61,6 +62,7 @@ class MovieRepository {
     userId,
     title,
     description,
+    image,
     year,
     imdbId,
     genres,
@@ -69,49 +71,49 @@ class MovieRepository {
     userId: string;
     title: string;
     description: string;
+    image: string;
     year: string;
     imdbId: string;
     genres: string[];
     rating: string;
   }) => {
     try {
-      const watchList = await prisma.$transaction(async (prisma) => {
-        const existingWatchList = await prisma.watchList.findUnique({
-          where: { userId },
-        });
-        if (!existingWatchList) {
-          throw new ServerError(
-            "Cannot add Movie to Watchlist: No existing watchlist"
-          );
-        }
-        const existingMovie = await this.getMovie({
-          title,
-          description,
-          year,
-          imdbId,
-          genres,
-          rating,
-        });
-        if (!existingMovie) {
-          throw new ServerError("Movie not found");
-        }
-        await prisma.watchList.update({
-          where: { id: existingWatchList.id },
-          data: {
-            movies: {
-              connect: { id: existingMovie.id },
-            },
-          },
-        });
-        // return all the movies in the watchlist
-        const updatedWatchList = await prisma.watchList.findUnique({
-          where: { id: existingWatchList.id },
-          include: {
-            movies: true,
-          },
-        });
-        return updatedWatchList;
+      const existingWatchList = await prisma.watchList.findUnique({
+        where: { userId },
       });
+      if (!existingWatchList) {
+        throw new ServerError(
+          "Cannot add Movie to Watchlist: No existing watchlist"
+        );
+      }
+      const existingMovie = await this.getMovie({
+        title,
+        description,
+        image,
+        year,
+        imdbId,
+        genres,
+        rating,
+      });
+      if (!existingMovie) {
+        throw new ServerError("Movie not found");
+      }
+      await prisma.watchList.update({
+        where: { id: existingWatchList.id },
+        data: {
+          movies: {
+            connect: { id: existingMovie.id },
+          },
+        },
+      });
+      // return all the movies in the watchlist
+      const watchList = await prisma.watchList.findUnique({
+        where: { id: existingWatchList.id },
+        include: {
+          movies: true,
+        },
+      });
+
       return watchList;
     } catch (error) {
       throw error;
@@ -122,6 +124,7 @@ class MovieRepository {
     userId,
     title,
     description,
+    image,
     year,
     imdbId,
     genres,
@@ -130,57 +133,59 @@ class MovieRepository {
     userId: string;
     title: string;
     description: string;
+    image: string;
     year: string;
     imdbId: string;
     genres: string[];
     rating: string;
   }) => {
     try {
-      const watchHistory = await prisma.$transaction(async (prisma) => {
-        const existingHistory = await prisma.watchList.findUnique({
-          where: { userId },
-        });
-        if (!existingHistory) {
-          throw new ServerError(
-            "Cannot add Movie to History: No existing history"
-          );
-        }
-        const existingMovie = await this.getMovie({
-          title,
-          description,
-          year,
-          imdbId,
-          genres,
-          rating,
-        });
-        if (!existingMovie) {
-          throw new ServerError("Movie not found");
-        }
-        await prisma.movie.update({
-          where: { id: existingMovie.id },
-          data: {
-            datePlayed: new Date(),
-          },
-        });
-        await prisma.watchHistory.update({
-          where: { id: existingHistory.id },
-          data: {
-            movies: {
-              connect: { id: existingMovie.id },
-            },
-          },
-        });
-        // return all the movies in the history
-        const updatedWatchHistory = await prisma.watchList.findUnique({
-          where: { id: existingHistory.id },
-          include: {
-            movies: true,
-          },
-        });
-        return updatedWatchHistory;
+      const existingHistory = await prisma.watchList.findUnique({
+        where: { userId },
       });
+      if (!existingHistory) {
+        throw new ServerError(
+          "Cannot add Movie to History: No existing history"
+        );
+      }
+      const existingMovie = await this.getMovie({
+        title,
+        description,
+        image,
+        year,
+        imdbId,
+        genres,
+        rating,
+      });
+      if (!existingMovie) {
+        throw new ServerError("Movie not found");
+      }
+      await prisma.movie.update({
+        where: { id: existingMovie.id },
+        data: {
+          datePlayed: new Date(),
+        },
+      });
+      await prisma.watchHistory.update({
+        where: { id: existingHistory.id },
+        data: {
+          movies: {
+            connect: { id: existingMovie.id },
+          },
+        },
+      });
+      // return all the movies in the history
+      const watchHistory = await prisma.watchList.findUnique({
+        where: { id: existingHistory.id },
+        include: {
+          movies: true,
+        },
+      });
+
       return watchHistory;
-    } catch (error) {}
+    } catch (error) {
+      throw error;
+    }
   };
 
   removeMovieFromWatchlist = async ({
@@ -197,7 +202,7 @@ class MovieRepository {
         },
         include: {
           movies: true,
-        }
+        },
       });
       if (!watchList) {
         throw new ServerError("Watchlist not found");
@@ -213,12 +218,12 @@ class MovieRepository {
       const movieInWatchlist = watchList.movies.find(
         (movie) => movie.imdbId === imdbId
       );
-  
+
       if (!movieInWatchlist) {
         throw new ServerError("Movie is not in the watchlist");
       }
       // remove the movie from the watchlist
-      await prisma.watchList.update({
+      return prisma.watchList.update({
         where: {
           userId: userId,
         },
@@ -228,12 +233,10 @@ class MovieRepository {
           },
         },
       });
-      return  watchList
     } catch (error) {
-      throw error
+      throw error;
     }
   };
-  
 }
 
 export default MovieRepository;

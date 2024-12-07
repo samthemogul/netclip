@@ -3,6 +3,7 @@ model Movie {
     title       String
     description String
     year        String
+    image       String
     imdbId      String      @unique
     genres      Genre[]     @relation("MovieGenres")
     rating      String

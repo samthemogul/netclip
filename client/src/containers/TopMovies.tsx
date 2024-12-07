@@ -9,13 +9,13 @@ import MovieCard from "@/components/MovieCard"
 import CardCarousel from "./CardCarousel"
 
 // MISC
-import { TopMovie } from "@/types"
+import { IMovie, TopMovie } from "@/types"
 
 
 
 
 interface TopMoviesProp {
-    movies: TopMovie[]
+    movies: TopMovie[] | any[]
 }
 
 const TopMovies = ({ movies } : TopMoviesProp) => {
@@ -25,14 +25,14 @@ const TopMovies = ({ movies } : TopMoviesProp) => {
     return (
         <div>
             <CardCarousel>
-                {movies.map((movie) => {
+                {movies.map((movie: any) => {
                     const formatMovie = {
                         description: movie.description,
                         title: movie.title,
                         image: movie.image,
                         rating: movie.rating,
                         year: movie.year,
-                        imdbId: movie.imdbid,
+                        imdbId: movie.imdbid || movie.imdbId,
                         genre: movie.genre,
                         imdb_link: movie.imdb_link
                     }

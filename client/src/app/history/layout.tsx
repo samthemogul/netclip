@@ -1,15 +1,13 @@
 import type { Metadata } from "next";
 import React from "react";
 
-
-
 export const metadata: Metadata = {
-  title: "Top Movies Now",
+  title: "My History",
   description: "Stream your favourite movies",
 };
 
 
-export default function MovieSearchResultLayout ({
+export default function ExploreLayout ({
   children,
 }: Readonly<{
   children: React.ReactNode;
