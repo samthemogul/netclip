@@ -45,7 +45,7 @@ export default function Home() {
 
   const loginWithGoogle = async () => {
     try {
-      window.location.href = "http://localhost:4000/api/auth/google";
+      window.location.href = "https://netclip-server.onrender.com/api/auth/google";
     } catch (error) {
       console.log(error);
     }
