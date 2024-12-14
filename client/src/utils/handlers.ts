@@ -13,7 +13,7 @@ export const authenticateUser = async () => {
   try {
     let user = null;
     let error = null;
-    const res = await fetch("http://localhost:4000/api/auth/google", {
+    const res = await fetch("https://netclip-server.onrender.com/api/auth/google", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -36,7 +36,7 @@ export const fetchUser = async (id: string, accessToken: string) => {
   try {
     let user: IUser | null = null;
     let error: Error | null = null;
-    const res = await fetch(`http://localhost:4000/api/users/${id}`, {
+    const res = await fetch(`https://netclip-server.onrender.com/api/users/${id}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -60,7 +60,7 @@ export const getTopMovies = async (accessToken: string) => {
   try {
     let movies: TopMovie[] | null = null;
     let error: Error | null = null;
-    const res = await fetch("http://localhost:4000/api/movies/top", {
+    const res = await fetch("https://netclip-server.onrender.com/api/movies/top", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -85,7 +85,7 @@ export const getMovie = async (accessToken: string, imdbId: string) => {
     let movie = null;
     let error: Error | null = null;
 
-    const res = await fetch(`http://localhost:4000/api/movies/${imdbId}`, {
+    const res = await fetch(`https://netclip-server.onrender.com/api/movies/${imdbId}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -111,7 +111,7 @@ export const searchMovies = async (accessToken: string, query: string) => {
     let error: Error | null = null;
 
     const res = await fetch(
-      `http://localhost:4000/api/movies/search/${query}`,
+      `https://netclip-server.onrender.com/api/movies/search/${query}`,
       {
         method: "GET",
         headers: {
@@ -141,7 +141,7 @@ export const getMovieRecommendations = async (
     let error: Error | null = null;
 
     const res = await fetch(
-      `http://localhost:4000/api/movies/recommendations/${userId}`,
+      `https://netclip-server.onrender.com/api/movies/recommendations/${userId}`,
       {
         method: "GET",
         headers: {
@@ -171,7 +171,7 @@ export const addMovieToWatchList = async (
     let watchlist: IMovie[] | null = []
     let error: Error | null = null;
     const res = await fetch(
-      `http://localhost:4000/api/watchlist/new/${userId}`,
+      `https://netclip-server.onrender.com/api/watchlist/new/${userId}`,
       {
         method: "POST",
         headers: {
@@ -198,7 +198,7 @@ export const getWatchListMovies = async (userId: string, accessToken: string) =>
     let watchlist: IMovie[] | null = null;
     let error: Error | null = null;
 
-    const res = await fetch(`http://localhost:4000/api/watchlist/${userId}`, {
+    const res = await fetch(`https://netclip-server.onrender.com/api/watchlist/${userId}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -225,7 +225,7 @@ export const getHistoryMovies = async (
     let history: IMovie[] | null = null;
     let error: Error | null = null;
 
-    const res = await fetch(`http://localhost:4000/api/history/${userId}`, {
+    const res = await fetch(`https://netclip-server.onrender.com/api/history/${userId}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -246,7 +246,7 @@ export const getHistoryMovies = async (
 
 export const logoutUser = async (accessToken: string) => {
   try {
-    const res = await fetch("http://localhost:4000/api/auth/logout", {
+    const res = await fetch("https://netclip-server.onrender.com/api/auth/logout", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -268,7 +268,7 @@ export const getStreak = async (userId: string, accessToken: string) => {
     let streak: number | null = null;
     let error: Error | null = null;
 
-    const res = await fetch(`http://localhost:4000/api/users/${userId}/streak`, {
+    const res = await fetch(`https://netclip-server.onrender.com/api/users/${userId}/streak`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
