@@ -31,7 +31,7 @@ router.get(
         secure: false,
         maxAge: 24 * 60 * 60 * 1000, // 1 day expiration
       });
-      res.redirect(`http://localhost:3000/?userId=${user.id}&token=${encodeURIComponent(JSON.stringify(token))}`)
+      res.redirect(`https://netclip.onrender.com/?userId=${user.id}&token=${encodeURIComponent(JSON.stringify(token))}`)
     } catch (error) {
       next(error);
     }
