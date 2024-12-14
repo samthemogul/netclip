@@ -243,3 +243,46 @@ export const getHistoryMovies = async (
     return { history: null, error };
   }
 }
+
+export const logoutUser = async (accessToken: string) => {
+  try {
+    const res = await fetch("http://localhost:4000/api/auth/logout", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    const data = await res.json();
+    if (res.status == 200) {
+      throw new Error(data.message);
+    }
+    return
+  } catch (error: any) {
+    return
+  }
+}
+
+export const getStreak = async (userId: string, accessToken: string) => {
+  try {
+    let streak: number | null = null;
+    let error: Error | null = null;
+
+    const res = await fetch(`http://localhost:4000/api/users/${userId}/streak`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    const data = await res.json();
+    if (res.status == 200) {
+      streak = data.streak;
+      return { streak, error };
+    }
+    error = new Error(data.message);
+    return { streak, error };
+  } catch (error: any) {
+    return { streak: null, error };
+  }
+}

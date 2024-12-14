@@ -273,6 +273,7 @@ class MovieService {
       );
       if (response.status === 200) {
         const movies = response.data.results;
+        console.log(movies)
         data = movies;
       }
       return { data, error };
